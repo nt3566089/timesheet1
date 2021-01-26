@@ -1,0 +1,242 @@
+cd ~
+tar xvfz /mnt/package/20200304_1.0.4_base_log_enabled/NB_0.3.1_MMC_20200304.0.tar.gz
+ln -s NB_0.3.1 ws
+
+cd ws/modelsim
+make clean; make unsetup setup; make
+vi .gismo_config
+
+./gimlet
+> r
+
+途中 gdb> p GismoSetProduct("BOTAN","FX")を挟んで4回ぐらい p GismoSetProduct("BOTANPLUS", "FX")　　//Greif//　p GismoSetProduct("PF22C1GREIF", "FX") //Reiki// p GismoSetProduct("REIKI", "FX")
+//Orca// p GismoSetProduct("ORCA","JP")  //shobu//p GismoSetProduct("SHOBU", "FX")
+https://alexandrite.fujixerox.co.jp/wiki/pages/viewpage.action?pageId=42041528ここで確認できます。
+
+
+gimlet起動後の臨時対応 p GismoSetChainLinkValue (790,900,"1")
+
+
+[EwbDevToolsViewer]
+pushd ~/greif/ewbparts/integ/dll/sim/ewbparts
+mv libwebkitremotedebug.so.1.0.0{,.ORIG}
+cp -p libwebkitdoremotedebug.so.1.0.0 libwebkitremotedebug.so.1.0.0
+popd
+make
+export EWB_WEBKIT_REMOTE_DEBUG=8089
+export EWB_WEBKIT_LOG="1"
+
+
+
+
+
+アカウント
+　ID: fxY8638@dc00.fujixerox.net
+　PW: pCYhT5la
+
+gimlet最新romアドレス:pscp到opal取　172.26.175.11的 /mnt/gimlet_package/　下的 NB_gimlet_botan_release-21.tar.gz　Weeklyインテグ　NB_gimlet_botan_latest-release-2.tar.gz　Dailyインテグ
+
+gimlet共通toolアドレス: //172.23.105.38/Share/devenv/OfficeCont/Gimlet
+
+
+release note:
+https://alexandrite.fujixerox.co.jp/wiki/pages/viewpage.action?pageId=70221959
+
+
+cgi-bin -> CommonNVM.js -> SmtpSvrName在nvm里设ip后，mail送信可以访问
+						   MilliInch 在nvm里设3为inch，1为mm
+						   
+
+git显示日文
+export LANG=ja_JP.UTF-8
+
+
+
+top.As.AsReqIntrEnt(new top.As.AsCallBack(function(){
+  console.log(top.As.AsGetIntrRslt())
+}))
+
+top.As.AsReqIntrExit(new top.As.AsCallBack(function(){
+  var instrRslt = top.AS.AsGetIntrRslt();
+  console.log(instrRslt)
+}))
+
+
+
+postman代替soapUi：
+SOAPAction:"http://www.fujifilm.com/fb/2021/03/ssm/management/jobTemplate#AddJobTemplate"
+Content-Type:text/xml;charset=UTF-8
+
+
+jobflow C-L:
+tdc GismoSetChainLinkValue 700 209 "16793600"
+tdc GismoSetChainLinkValue 700 210 "16793600"
+
+scanner C-L:
+tdc GismoSetChainLinkValue 700 199 "16334846"
+tdc GismoSetChainLinkValue 700 200 "16334846"
+
+scantoEmal:
+tdc GismoSetChainLinkValue 770 203 "172.16.31.247"                    SmtpSvrName
+tdc GismoSetChainLinkValue 770 077 "1"
+tdc GismoSetChainLinkValue 770 191 "test1@co.jp"                   from  
+
+エクスプローラを開く：windowsボタン + E
+場所：　　　　　\\172.16.35.22 を入力
+ユーザー名：　　mmcuser
+パスワード：　　MmcSmb7f
+ftpuser ftpuser
+
+info8log:
+tdc PfShowInfo 8
+modelsim/dk/ide0h/system/log/dbg/N.zip N.txt
+
+
+ROM作成Tips
+
+サーバ：172.26.175.11
+ユーザ名：fxY8638
+パスワード：pCYhT5la
+
+/share/devの下に自分用のフォルダを作成する
+mkdir /share/dev/fxY8638                            
+
+========================
+
+1.
+リリースノート ホームで記載されているOpal上のGISMOパッケージを、自分のROM作成環境に展開する。
+　例）/mnt/gimlet_package/NB_gismo_botan_0.203.17.1.tar.gz
+
+2.
+//文言不出来的时候，尝试 make clean或者mv incmsguilcw incmsguilcw_org
+$ mv uilcw{,.org}
+$ git clone -b develop/pf3.0_latest http://10.0.50.30:7990/git/scm/officecont/uilcw.git uilcw  username:fxY8638@dc00.fujixerox.net pwd:pCYhT5la
+$ cd uilcw
+$ source /share/env/C62-ARM-SIM
+
+//
+$ make `../Makefile/build botan lang_8b` rel
+$ make `../Makefile/build greif lang_8b` rel
+$ make `../Makefile/build shobu lang_8b` rel
+$ make `../Makefile/build reiki lang_8b` rel
+$ make `../Makefile/build orca lang_8b` rel
+$ make `../Makefile/build franky2 lang_8b` rel
+$ make `../Makefile/build vivi2 lang_8b` rel
+※lang_8bでmakeしています
+//
+git clone -b bugfix/DUI-5443test http://10.0.50.30:7990/git/scm/officecont/uilcw.git uilcw
+
+//gismoの場合
+3.
+$ cd ..
+$ cd model
+$ make rui    # "rui"は実パネル版、UI Simulator版をインテグするなら"gismo"を指定する
+$ make setup_squash
+
+//実機の場合
+3.
+$ cd ..
+$ cd model
+$ source /share/env/C62-ARM-SIM
+$ make rel
+$ make all-dld
+PF3-Botan-FXIBG-dld-0.XXX.XX.zipのような名前のzipが生成される。中にstd-dld.binファイルが入っている。
+
+===============================
+実機にROMをインストールする
+・簡単な方法
+1.LPRで送信する
+1-1. 対象実機のWebUIで管理者にログインし システム→ソフトウェアバージョンアップ設定が有効になっているのを確認する
+1-2. dldをlprで実機のIPに送信する
+
+例： lpr -P ps -S 172.27.35.27 C:\XXX\YYY\std-dld.bin
+
+・前の方法
+1. Download Modeに入る
+1-1. 主電源をオフにする。
+
+1-2. 電源ボタン + ホームボタン を押しながら、主電源をオンにする。
+
+1-3. 「SPECIAL BOOT MENU」と表示されるので、B"OO"T　 M"EN"U　のあたりを押しながらホームボタンを押す。
+
+1-4. 6789#と入力する。
+
+1-5. Download Modeを選択する。
+
+       「だうんろ～ど」と表示されればOK
+
+2. JdPrintからROMを転送する
+2-1. PCにJdPrintをインストールしておく。
+
+       JdPrintはこちらにあるものをお使いください。
+
+2-2. PCと実機をUSBケーブルで接続する。
+
+       実機側が「USB 2.0 Type B」で、PC側が「USB 2.0 Type A」となるように接続する。
+
+2-3. JdPrintを起動し、ROMを転送する。
+
+       出力先：USB
+
+       ファイル：std-dld.bin
+
+※15.30以降起動できません場合、
+　HDD Format（HDD Initではなく）
+　NVM RAM Init
+を実行することで起動するようになります。
+===============================
+リリースノート-サブmakeコマンド
+https://alexandrite.fujixerox.co.jp/wiki/pages/viewpage.action?pageId=165119041
+
+==============================
+CDM + D2G-fin-base + D2G-interposer
+可以配置出Interposer tray
+
+
+linux共享文件夹设置用户:
+mount -t vboxsf -o uid=1000 share /mnt/sharew 重启后无效，root:vboxsf
+sudo usermod -a -G vboxsf fxgreen 亲测将当前用户加入vboxsf组后重启有效
+
+
+実機rom,integから作成方法：
+0.17.30の環境を展開して、incjrm、incpf、jrm、libjrm、pflite3.0、libpqを下記の環境のものに差し替えてください。実機のModelもmakeできるはずです。
+Local.incjrm.20200917.tar.gz    
+Local.incpf.20200917.tar.gz    
+Local.jrm.20200917.tar.gz         
+Local.libjrm.20200917.tar.gz    
+Local.pflite3.0.20200917.1.tar.gz
+
+※frameManager相关的方法:
+lui_develop\Client\010.機能設計\Frame Manager
+WebUI機能仕様書_ClientFrameManager.docx
+
+サブ審議登録：
+https://alexandrite.fujixerox.co.jp/wiki/pages/viewpage.action?pageId=199819940
+
+Diag内部連絡:
+https://alexandrite.fujixerox.co.jp/jira/secure/Dashboard.jspa?selectPageId=23101
+
+
+
+##外部認証Gimletでの動作確認方法##
+
+準備：
+(1) 外部認証のSWキーを有効にする。
+tdc GismoSetChainLinkValue 700 199 "10"
+tdc GismoSetChainLinkValue 700 200 "10"
+
+(2) KOログイン＞認証/集計/権限＞認証/集計設定＞認証/集計の運用＞外部認証/集計に設定して再起動
+(3) KOログイン＞ネットワーク設定＞外部認証サーバー/ディレクトリサービス設定＞Kerberosサーバー設定で設定する。
+MMC環境の場合、以下が利用できます。
+Kerberosサーバー1:
+プライマリーサーバー：172.16.35.20
+認証先(レルム名)：mmc.local
+
+(4) 外部認証のキャッシュを作成する。
+tdc AAAPUserAddTool 1 1000
+して再起動
+
+(5) 任意ユーザーでログイン
+MMC環境の場合、
+ユーザーID：osamura
+パスワード：MmcUser!
